@@ -12,7 +12,7 @@ hivemqExtension {
     author.set("MaibornWolff GmbH")
     priority.set(1000)
     startPriority.set(1000)
-    mainClass.set("$group.metricspertopic.TopicsMetricsMain")
+    mainClass.set("$group.metricspertopic.TopicsMetricsExtensionMain")
     sdkVersion.set("$version")
 
     resources {

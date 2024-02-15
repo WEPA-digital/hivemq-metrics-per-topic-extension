@@ -15,26 +15,38 @@
  */
 package com.wepa.hivemqextensions.metricspertopic;
 
+import com.codahale.metrics.Counter;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.interceptor.publish.PublishInboundInterceptor;
+import com.hivemq.extension.sdk.api.interceptor.publish.PublishOutboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishInboundOutput;
-import com.hivemq.extension.sdk.api.packets.publish.ModifiablePublishPacket;
+import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishOutboundInput;
+import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishOutboundOutput;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
+public class TopicsInterceptor implements PublishInboundInterceptor, PublishOutboundInterceptor {
 
-public class TopicsInterceptor implements PublishInboundInterceptor {
+    final private Counter incomingMessagesCounter;
+    final private Counter outgoingMessagesCounter;
+
+    public TopicsInterceptor(Counter incomingMessagesCounter ,Counter outgoingMessagesCounter) {
+        this.incomingMessagesCounter = incomingMessagesCounter;
+        this.outgoingMessagesCounter = outgoingMessagesCounter;
+    }
 
     @Override
     public void onInboundPublish(
             final @NotNull PublishInboundInput publishInboundInput,
             final @NotNull PublishInboundOutput publishInboundOutput
     ) {
-        final ModifiablePublishPacket publishPacket = publishInboundOutput.getPublishPacket();
-        if ("wepa/cas/paper/pm13/vacuum_system".equals(publishPacket.getTopic())) {
-            final ByteBuffer payload = ByteBuffer.wrap("Hello From Vacuum System!".getBytes(StandardCharsets.UTF_8));
-            publishPacket.setPayload(payload);
-        }
+        this.incomingMessagesCounter.inc();
+    }
+
+    @Override
+    public void onOutboundPublish(
+            @NotNull PublishOutboundInput publishOutboundInput,
+            @NotNull PublishOutboundOutput publishOutboundOutput
+    ) {
+        this.outgoingMessagesCounter.inc();
     }
 }

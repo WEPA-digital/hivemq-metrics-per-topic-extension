@@ -15,18 +15,21 @@
  */
 package com.wepa.hivemqextensions.metricspertopic;
 
+import com.codahale.metrics.Counter;
+import com.codahale.metrics.MetricRegistry;
 import com.hivemq.extension.sdk.api.ExtensionMain;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
-import com.hivemq.extension.sdk.api.events.EventRegistry;
 import com.hivemq.extension.sdk.api.parameter.*;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extension.sdk.api.services.intializer.InitializerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TopicsMetricsMain implements ExtensionMain {
+import java.util.concurrent.TimeUnit;
 
-    private static final @NotNull Logger log = LoggerFactory.getLogger(TopicsMetricsMain.class);
+public class TopicsMetricsExtensionMain implements ExtensionMain {
+
+    private static final @NotNull Logger log = LoggerFactory.getLogger(TopicsMetricsExtensionMain.class);
 
     @Override
     public void extensionStart(
@@ -35,11 +38,20 @@ public class TopicsMetricsMain implements ExtensionMain {
     ) {
 
         try {
-            addClientLifecycleEventListener();
-            addPublishModifier();
+            final MetricRegistry metricRegistry = Services.metricRegistry();
+
+            final Counter incomingMessages = metricRegistry.counter("com.wepa.messages.incoming.count");
+            final Counter outgoingMessages = metricRegistry.counter("com.wepa.messages.outgoing.count");
+
+            Services.extensionExecutorService().scheduleAtFixedRate(() -> {
+                log.info("Total Incoming messages {}", incomingMessages.getCount());
+                log.info("Total ongoing messages {}", outgoingMessages.getCount());
+            }, 10, 10, TimeUnit.SECONDS);
+
+            addClientLifecycleEventListener(incomingMessages, outgoingMessages);
 
             final ExtensionInformation extensionInformation = extensionStartInput.getExtensionInformation();
-            log.info("Started " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
+            log.info("Extension started " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
 
         } catch (final Exception e) {
             log.error("Exception thrown at extension start: ", e);
@@ -52,24 +64,18 @@ public class TopicsMetricsMain implements ExtensionMain {
             final @NotNull ExtensionStopOutput extensionStopOutput
     ) {
         final ExtensionInformation extensionInformation = extensionStopInput.getExtensionInformation();
-        log.info("Stopped " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
+        log.info("Extension Stopped " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
     }
 
-    private void addPublishModifier() {
-        final EventRegistry eventRegistry = Services.eventRegistry();
-
-        final TopicsListener topicsListener = new TopicsListener();
-
-        eventRegistry.setClientLifecycleEventListener(input -> topicsListener);
-    }
-
-    private void addClientLifecycleEventListener() {
+    private void addClientLifecycleEventListener(Counter incomingMessagesCounter ,Counter outgoingMessagesCounter) {
 
         final InitializerRegistry initializerRegistry = Services.initializerRegistry();
 
-        final TopicsInterceptor topicsInterceptor = new TopicsInterceptor();
+        final TopicsInterceptor topicsInterceptor = new TopicsInterceptor(incomingMessagesCounter ,outgoingMessagesCounter);
 
-        initializerRegistry.setClientInitializer(
-                (initializerInput, clientContext) -> clientContext.addPublishInboundInterceptor(topicsInterceptor));
+        initializerRegistry.setClientInitializer((initializerInput, clientContext) -> {
+            clientContext.addPublishInboundInterceptor(topicsInterceptor);
+            clientContext.addPublishOutboundInterceptor(topicsInterceptor);
+        });
     }
 }

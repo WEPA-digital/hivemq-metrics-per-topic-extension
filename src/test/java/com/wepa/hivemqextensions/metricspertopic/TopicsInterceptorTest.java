@@ -15,10 +15,13 @@
  */
 package com.wepa.hivemqextensions.metricspertopic;
 
+import com.codahale.metrics.Counter;
+import com.codahale.metrics.MetricRegistry;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishInboundOutput;
 import com.hivemq.extension.sdk.api.packets.publish.ModifiablePublishPacket;
+import com.hivemq.extension.sdk.api.services.Services;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -40,7 +43,12 @@ public class TopicsInterceptorTest {
 
     @BeforeEach
     void setUp() {
-        topicsInterceptor = new TopicsInterceptor();
+        final MetricRegistry metricRegistry = Services.metricRegistry();
+
+        final Counter incomingMessages = metricRegistry.counter("com.wepa.messages.incoming.count");
+        final Counter outgoingMessages = metricRegistry.counter("com.wepa.messages.outgoing.count");
+
+        topicsInterceptor = new TopicsInterceptor(incomingMessages, outgoingMessages);
         publishInboundInput = mock(PublishInboundInput.class);
         publishInboundOutput = mock(PublishInboundOutput.class);
         publishPacket = mock(ModifiablePublishPacket.class);
