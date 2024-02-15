@@ -1,0 +1,1 @@
+rootProject.name = "hivemq-metrics-per-topic-extension"
