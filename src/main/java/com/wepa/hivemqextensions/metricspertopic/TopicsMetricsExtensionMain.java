@@ -21,7 +21,9 @@ import com.hivemq.extension.sdk.api.ExtensionMain;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.parameter.*;
 import com.hivemq.extension.sdk.api.services.Services;
+import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
 import com.hivemq.extension.sdk.api.services.intializer.InitializerRegistry;
+import com.wepa.hivemqextensions.metricspertopic.initializer.ClientInitializerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,19 +38,26 @@ public class TopicsMetricsExtensionMain implements ExtensionMain {
             final @NotNull ExtensionStartInput extensionStartInput,
             final @NotNull ExtensionStartOutput extensionStartOutput
     ) {
+        try {
+            extensionStartInput.getServerInformation();
+        } catch (final NoSuchMethodError e) {
+            // only a version that is not supported will throw this exception
+            extensionStartOutput.preventExtensionStartup("The HiveMQ version is not supported");
+            return;
+        }
 
         try {
             final MetricRegistry metricRegistry = Services.metricRegistry();
+            Counter incomingMessagesCounter = metricRegistry.counter("com.wepa.messages.incoming.count");
+            Counter outgoingMessagesCounter = metricRegistry.counter("com.wepa.messages.outgoing.count");
 
-            final Counter incomingMessages = metricRegistry.counter("com.wepa.messages.incoming.count");
-            final Counter outgoingMessages = metricRegistry.counter("com.wepa.messages.outgoing.count");
+            addClientLifecycleEventListener(metricRegistry);
 
+            // TODO: ONly for testing purpose, every 10 seconds log the amount of messages sent and received per topic
             Services.extensionExecutorService().scheduleAtFixedRate(() -> {
-                log.info("Total Incoming messages {}", incomingMessages.getCount());
-                log.info("Total ongoing messages {}", outgoingMessages.getCount());
+                log.info("Currently Total incoming messages count {}", incomingMessagesCounter.getCount());
+                log.info("Currently Total outgoing messages count {}", outgoingMessagesCounter.getCount());
             }, 10, 10, TimeUnit.SECONDS);
-
-            addClientLifecycleEventListener(incomingMessages, outgoingMessages);
 
             final ExtensionInformation extensionInformation = extensionStartInput.getExtensionInformation();
             log.info("Extension started " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
@@ -67,15 +76,11 @@ public class TopicsMetricsExtensionMain implements ExtensionMain {
         log.info("Extension Stopped " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
     }
 
-    private void addClientLifecycleEventListener(Counter incomingMessagesCounter ,Counter outgoingMessagesCounter) {
+    private void addClientLifecycleEventListener(final MetricRegistry metricRegistry) {
 
         final InitializerRegistry initializerRegistry = Services.initializerRegistry();
+        final ClientInitializer clientInitializer = new ClientInitializerImpl(metricRegistry);
 
-        final TopicsInterceptor topicsInterceptor = new TopicsInterceptor(incomingMessagesCounter ,outgoingMessagesCounter);
-
-        initializerRegistry.setClientInitializer((initializerInput, clientContext) -> {
-            clientContext.addPublishInboundInterceptor(topicsInterceptor);
-            clientContext.addPublishOutboundInterceptor(topicsInterceptor);
-        });
+        initializerRegistry.setClientInitializer(clientInitializer);
     }
 }
