@@ -7,6 +7,7 @@ import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.interceptor.publish.PublishOutboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishOutboundOutput;
+import com.wepa.hivemqextensions.metricspertopic.config.TopicsMetricsConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,10 @@ public class PublishOutboundInterceptorImpl implements PublishOutboundIntercepto
     private Counter outgoingMessagesCounter;
     private static final @NotNull Logger log = LoggerFactory.getLogger(PublishOutboundInterceptorImpl.class);
 
-    public PublishOutboundInterceptorImpl(final @NotNull MetricRegistry metricRegistry) {
+    public PublishOutboundInterceptorImpl(
+            final @NotNull MetricRegistry metricRegistry,
+            final @NotNull TopicsMetricsConfig config
+    ) {
 
         final SortedMap<String, Counter> countersOutgoingMessages = metricRegistry.getCounters(MetricFilter.contains("com.wepa.messages.outgoing.count"));
 
@@ -28,7 +32,10 @@ public class PublishOutboundInterceptorImpl implements PublishOutboundIntercepto
     }
 
     @Override
-    public void onOutboundPublish(@NotNull PublishOutboundInput publishOutboundInput, @NotNull PublishOutboundOutput publishOutboundOutput) {
+    public void onOutboundPublish(
+        @NotNull PublishOutboundInput publishOutboundInput, 
+        @NotNull PublishOutboundOutput publishOutboundOutput
+    ) {
         log.info("Outbound Message From Topic: {}", publishOutboundInput.getPublishPacket().getTopic());
         outgoingMessagesCounter.inc();
     }

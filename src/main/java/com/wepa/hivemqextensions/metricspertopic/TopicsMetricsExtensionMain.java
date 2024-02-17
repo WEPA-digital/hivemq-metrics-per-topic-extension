@@ -23,6 +23,8 @@ import com.hivemq.extension.sdk.api.parameter.*;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
 import com.hivemq.extension.sdk.api.services.intializer.InitializerRegistry;
+import com.wepa.hivemqextensions.metricspertopic.config.TopicsMetricsConfig;
+import com.wepa.hivemqextensions.metricspertopic.config.TopicsMetricsConfigReader;
 import com.wepa.hivemqextensions.metricspertopic.initializer.ClientInitializerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,22 +49,27 @@ public class TopicsMetricsExtensionMain implements ExtensionMain {
         }
 
         try {
+
+            final TopicsMetricsConfigReader configReader =
+                    new TopicsMetricsConfigReader(extensionStartInput.getExtensionInformation()
+                            .getExtensionHomeFolder());
+            final TopicsMetricsConfig config = new TopicsMetricsConfig(configReader.readProperties());
+
             final MetricRegistry metricRegistry = Services.metricRegistry();
-            Counter incomingMessagesCounter = metricRegistry.counter("com.wepa.messages.incoming.count");
-            Counter outgoingMessagesCounter = metricRegistry.counter("com.wepa.messages.outgoing.count");
 
-            addClientLifecycleEventListener(metricRegistry);
+            // Create Counter metrics for later use
+            metricRegistry.counter("com.wepa.messages.incoming.count");
+            metricRegistry.counter("com.wepa.messages.outgoing.count");
 
-            // TODO: ONly for testing purpose, every 10 seconds log the amount of messages sent and received per topic
-            Services.extensionExecutorService().scheduleAtFixedRate(() -> {
-                log.info("Currently Total incoming messages count {}", incomingMessagesCounter.getCount());
-                log.info("Currently Total outgoing messages count {}", outgoingMessagesCounter.getCount());
-            }, 10, 10, TimeUnit.SECONDS);
+            initializeClient(metricRegistry, config);
 
             final ExtensionInformation extensionInformation = extensionStartInput.getExtensionInformation();
             log.info("Extension started " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
 
         } catch (final Exception e) {
+            extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() +
+                    " cannot be started");
+
             log.error("Exception thrown at extension start: ", e);
         }
     }
@@ -76,10 +83,12 @@ public class TopicsMetricsExtensionMain implements ExtensionMain {
         log.info("Extension Stopped " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
     }
 
-    private void addClientLifecycleEventListener(final MetricRegistry metricRegistry) {
-
+    private void initializeClient(
+            final @NotNull MetricRegistry metricRegistry,
+            final @NotNull TopicsMetricsConfig config
+    ) {
         final InitializerRegistry initializerRegistry = Services.initializerRegistry();
-        final ClientInitializer clientInitializer = new ClientInitializerImpl(metricRegistry);
+        final ClientInitializer clientInitializer = new ClientInitializerImpl(metricRegistry, config);
 
         initializerRegistry.setClientInitializer(clientInitializer);
     }

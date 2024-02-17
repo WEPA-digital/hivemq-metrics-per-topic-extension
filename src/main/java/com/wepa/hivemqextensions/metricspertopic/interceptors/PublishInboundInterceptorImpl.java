@@ -7,6 +7,7 @@ import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.interceptor.publish.PublishInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishInboundOutput;
+import com.wepa.hivemqextensions.metricspertopic.config.TopicsMetricsConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,10 +15,13 @@ import java.util.SortedMap;
 
 public class PublishInboundInterceptorImpl implements PublishInboundInterceptor {
 
-    private Counter incomingMessagesCounter;
     private static final @NotNull Logger log = LoggerFactory.getLogger(PublishInboundInterceptorImpl.class);
+    private Counter incomingMessagesCounter;
 
-    public PublishInboundInterceptorImpl(final @NotNull MetricRegistry metricRegistry) {
+    public PublishInboundInterceptorImpl(
+            final @NotNull MetricRegistry metricRegistry,
+            final @NotNull TopicsMetricsConfig config
+    ) {
 
         final SortedMap<String, Counter> countersIncomingMessages = metricRegistry.getCounters(MetricFilter.contains("com.wepa.messages.incoming.count"));
 
