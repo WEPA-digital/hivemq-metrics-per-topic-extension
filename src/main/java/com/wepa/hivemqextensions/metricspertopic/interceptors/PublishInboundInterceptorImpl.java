@@ -1,34 +1,34 @@
 package com.wepa.hivemqextensions.metricspertopic.interceptors;
 
 import com.codahale.metrics.Counter;
-import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.interceptor.publish.PublishInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishInboundOutput;
+import com.wepa.hivemqextensions.metricspertopic.TopicsUtils;
 import com.wepa.hivemqextensions.metricspertopic.config.TopicsMetricsConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.SortedMap;
+import java.util.HashMap;
 
 public class PublishInboundInterceptorImpl implements PublishInboundInterceptor {
 
+    private final HashMap<String, Counter> counters;
+    private final TopicsMetricsConfig config;
+    private final MetricRegistry metricRegistry;
+
     private static final @NotNull Logger log = LoggerFactory.getLogger(PublishInboundInterceptorImpl.class);
-    private Counter incomingMessagesCounter;
+    private static final String METRIC_NAME_PREFIX = "eu.wepa.hivemq.messages.incoming.count";
 
     public PublishInboundInterceptorImpl(
             final @NotNull MetricRegistry metricRegistry,
             final @NotNull TopicsMetricsConfig config
     ) {
-
-        final SortedMap<String, Counter> countersIncomingMessages = metricRegistry.getCounters(MetricFilter.contains("com.wepa.messages.incoming.count"));
-
-        //we expect a single result here
-        if (!countersIncomingMessages.isEmpty()) {
-            incomingMessagesCounter = countersIncomingMessages.values().iterator().next();
-        }
+        this.metricRegistry = metricRegistry;
+        this.config = config;
+        counters = new HashMap<>();
     }
 
     @Override
@@ -36,7 +36,23 @@ public class PublishInboundInterceptorImpl implements PublishInboundInterceptor 
             @NotNull PublishInboundInput publishInboundInput,
             @NotNull PublishInboundOutput publishInboundOutput
     ) {
-        log.info("InBound Message From Topic: {}", publishInboundInput.getPublishPacket().getTopic());
-        incomingMessagesCounter.inc();
+        String topic = publishInboundInput.getPublishPacket().getTopic();
+        String metricName = TopicsUtils.topicToValidMetricName(topic, METRIC_NAME_PREFIX);
+
+        // if counter not exist than, add it to counters.
+        if (!counters.containsKey(metricName)) {
+            if (config.isVerbose()) {
+                log.info("No Metric Found For Topic: {}", topic);
+                log.info("Create new Metric {} For Topic: {}", metricName, topic);
+            }
+
+            TopicsUtils.addTopicCounter(
+                metricName,
+                metricRegistry,
+                counters
+            );
+        }
+
+        counters.get(metricName).inc();
     }
 }

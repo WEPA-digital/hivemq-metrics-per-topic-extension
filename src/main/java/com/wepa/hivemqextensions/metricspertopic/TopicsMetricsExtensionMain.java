@@ -15,7 +15,6 @@
  */
 package com.wepa.hivemqextensions.metricspertopic;
 
-import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.hivemq.extension.sdk.api.ExtensionMain;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
@@ -28,8 +27,6 @@ import com.wepa.hivemqextensions.metricspertopic.config.TopicsMetricsConfigReade
 import com.wepa.hivemqextensions.metricspertopic.initializer.ClientInitializerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.TimeUnit;
 
 public class TopicsMetricsExtensionMain implements ExtensionMain {
 
@@ -51,15 +48,12 @@ public class TopicsMetricsExtensionMain implements ExtensionMain {
         try {
 
             final TopicsMetricsConfigReader configReader =
-                    new TopicsMetricsConfigReader(extensionStartInput.getExtensionInformation()
+                    new TopicsMetricsConfigReader(
+                        extensionStartInput.getExtensionInformation()
                             .getExtensionHomeFolder());
+
             final TopicsMetricsConfig config = new TopicsMetricsConfig(configReader.readProperties());
-
             final MetricRegistry metricRegistry = Services.metricRegistry();
-
-            // Create Counter metrics for later use
-            metricRegistry.counter("com.wepa.messages.incoming.count");
-            metricRegistry.counter("com.wepa.messages.outgoing.count");
 
             initializeClient(metricRegistry, config);
 

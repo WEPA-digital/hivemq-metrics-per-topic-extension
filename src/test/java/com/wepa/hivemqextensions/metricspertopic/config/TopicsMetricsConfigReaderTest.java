@@ -15,9 +15,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TopicsMetricsConfigReaderTest {
 
-    private final int totalAvailableFlags = 1;
+    private final int totalAvailableFlags = 2;
 
-    private final @NotNull List<String> defaultProperties = List.of(TopicsMetricsConfig.COMBINE_TOPICS);
+    private final @NotNull List<String> defaultProperties = List.of(
+            TopicsMetricsConfig.COMBINE_TOPICS,
+            TopicsMetricsConfig.VERBOSE
+    );
 
     @Test
     void defaultPropertiesWhenNoPropertyFileInConfigFolder(@TempDir final @NotNull Path tempDir) {

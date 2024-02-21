@@ -9,8 +9,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static com.wepa.hivemqextensions.metricspertopic.config.TopicsMetricsConfig.COMBINE_TOPICS;
-import static com.wepa.hivemqextensions.metricspertopic.config.TopicsMetricsConfig.TRUE;
+import static com.wepa.hivemqextensions.metricspertopic.config.TopicsMetricsConfig.*;
 
 public class TopicsMetricsConfigReader {
 
@@ -30,6 +29,7 @@ public class TopicsMetricsConfigReader {
 
     private void setDefaults() {
         properties.setProperty(COMBINE_TOPICS, TRUE);
+        properties.setProperty(VERBOSE, FALSE);
     }
 
     public @NotNull Properties readProperties() {
