@@ -16,6 +16,8 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: gradle
+      - name: Check
+        run: ./gradlew check
       - name: Build Zip
         run: ./gradlew hivemqExtensionZip
       - name: Upload Release Asset
