@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wepa.hivemqextensions.metricspertopic.configuration;
+package eu.wepa.hivemqextensions.metricspertopic.configuration;
 
 import com.hivemq.extension.sdk.api.annotations.NotNull;
-import com.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
+import eu.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 

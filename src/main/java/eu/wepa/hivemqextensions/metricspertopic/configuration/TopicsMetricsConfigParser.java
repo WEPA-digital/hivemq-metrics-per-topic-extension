@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wepa.hivemqextensions.metricspertopic.configuration;
+package eu.wepa.hivemqextensions.metricspertopic.configuration;
 
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.annotations.Nullable;
-import com.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
+import eu.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 
-import static com.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig.*;
+import static eu.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig.*;
 
 public class TopicsMetricsConfigParser {
 

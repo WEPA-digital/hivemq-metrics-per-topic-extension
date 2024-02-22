@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wepa.hivemqextensions.metricspertopic.initializer.interceptors;
+package eu.wepa.hivemqextensions.metricspertopic.initializer.interceptors;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
@@ -21,8 +21,8 @@ import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.interceptor.publish.PublishOutboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishOutboundOutput;
-import com.wepa.hivemqextensions.metricspertopic.TopicsUtils;
-import com.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
+import eu.wepa.hivemqextensions.metricspertopic.TopicsUtils;
+import eu.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

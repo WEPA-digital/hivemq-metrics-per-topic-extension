@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wepa.hivemqextensions.metricspertopic;
+package eu.wepa.hivemqextensions.metricspertopic;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;

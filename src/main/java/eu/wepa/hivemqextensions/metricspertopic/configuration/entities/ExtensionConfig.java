@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wepa.hivemqextensions.metricspertopic.configuration.entities;
+package eu.wepa.hivemqextensions.metricspertopic.configuration.entities;
 
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.annotations.Nullable;

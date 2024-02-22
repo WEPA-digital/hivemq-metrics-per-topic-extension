@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.license)
 }
 
-group = "com.wepa.hivemqextensions"
+group = "eu.wepa.hivemqextensions"
 description = "HiveMQ Extension which collect Metrics Per topic."
 
 hivemqExtension {

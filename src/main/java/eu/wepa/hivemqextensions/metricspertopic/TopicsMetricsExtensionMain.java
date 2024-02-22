@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wepa.hivemqextensions.metricspertopic;
+package eu.wepa.hivemqextensions.metricspertopic;
 
 import com.codahale.metrics.MetricRegistry;
 import com.hivemq.extension.sdk.api.ExtensionMain;
@@ -22,9 +22,9 @@ import com.hivemq.extension.sdk.api.parameter.*;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
 import com.hivemq.extension.sdk.api.services.intializer.InitializerRegistry;
-import com.wepa.hivemqextensions.metricspertopic.configuration.TopicsMetricsConfigParser;
-import com.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
-import com.wepa.hivemqextensions.metricspertopic.initializer.ClientInitializerImpl;
+import eu.wepa.hivemqextensions.metricspertopic.configuration.TopicsMetricsConfigParser;
+import eu.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
+import eu.wepa.hivemqextensions.metricspertopic.initializer.ClientInitializerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

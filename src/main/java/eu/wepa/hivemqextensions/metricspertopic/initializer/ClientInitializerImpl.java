@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wepa.hivemqextensions.metricspertopic.initializer;
+package eu.wepa.hivemqextensions.metricspertopic.initializer;
 
 import com.codahale.metrics.MetricRegistry;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
@@ -22,9 +22,9 @@ import com.hivemq.extension.sdk.api.client.parameter.InitializerInput;
 import com.hivemq.extension.sdk.api.interceptor.publish.PublishInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.publish.PublishOutboundInterceptor;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
-import com.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
-import com.wepa.hivemqextensions.metricspertopic.initializer.interceptors.PublishInboundInterceptorImpl;
-import com.wepa.hivemqextensions.metricspertopic.initializer.interceptors.PublishOutboundInterceptorImpl;
+import eu.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
+import eu.wepa.hivemqextensions.metricspertopic.initializer.interceptors.PublishInboundInterceptorImpl;
+import eu.wepa.hivemqextensions.metricspertopic.initializer.interceptors.PublishOutboundInterceptorImpl;
 
 public class ClientInitializerImpl implements ClientInitializer {
 
