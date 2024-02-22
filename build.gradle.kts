@@ -13,7 +13,7 @@ hivemqExtension {
     priority.set(1000)
     startPriority.set(1000)
     mainClass.set("$group.metricspertopic.TopicsMetricsExtensionMain")
-    sdkVersion.set("$version")
+    sdkVersion.set(libs.versions.hivemq.extensionSdk)
 
     resources {
         from("LICENSE")
@@ -57,10 +57,6 @@ license {
 }
 
 /* ******************** debugging ******************** */
-
-tasks.prepareHivemqHome {
-    hivemqHomeDirectory.set(file("/your/path/to/hivemq-<VERSION>"))
-}
 
 tasks.runHivemqWithExtension {
     debugOptions {

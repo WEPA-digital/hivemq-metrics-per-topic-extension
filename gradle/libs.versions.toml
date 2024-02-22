@@ -5,6 +5,7 @@ mockito = "4.11.0"
 testcontainers = "1.18.3"
 jaxb-api = "2.3.3"
 jaxb-impl = "2.3.5"
+hivemq-extensionSdk = "4.25.0"
 
 [libraries]
 jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }

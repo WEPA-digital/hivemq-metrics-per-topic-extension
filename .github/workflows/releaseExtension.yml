@@ -1,0 +1,29 @@
+name: Release Extension
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - name: Build Zip
+        run: ./gradlew hivemqExtensionZip
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./build/hivemq-extension/hivemq-metrics-per-topic-extension-${{ github.event.release.name }}.zip
+          asset_name: hivemq-metrics-per-topic-extension-${{ github.event.release.name }}.zip
+          asset_content_type: application/zip
