@@ -22,15 +22,15 @@ import com.hivemq.extension.sdk.api.parameter.*;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
 import com.hivemq.extension.sdk.api.services.intializer.InitializerRegistry;
-import com.wepa.hivemqextensions.metricspertopic.config.TopicsMetricsConfig;
-import com.wepa.hivemqextensions.metricspertopic.config.TopicsMetricsConfigReader;
+import com.wepa.hivemqextensions.metricspertopic.configuration.TopicsMetricsConfigParser;
+import com.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
 import com.wepa.hivemqextensions.metricspertopic.initializer.ClientInitializerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TopicsMetricsExtensionMain implements ExtensionMain {
 
-    private static final @NotNull Logger log = LoggerFactory.getLogger(TopicsMetricsExtensionMain.class);
+    private static final @NotNull Logger LOG = LoggerFactory.getLogger(TopicsMetricsExtensionMain.class);
 
     @Override
     public void extensionStart(
@@ -47,24 +47,24 @@ public class TopicsMetricsExtensionMain implements ExtensionMain {
 
         try {
 
-            final TopicsMetricsConfigReader configReader =
-                    new TopicsMetricsConfigReader(
+            final TopicsMetricsConfigParser configReader =
+                    new TopicsMetricsConfigParser(
                         extensionStartInput.getExtensionInformation()
                             .getExtensionHomeFolder());
+            ExtensionConfig config = configReader.getConfig();
 
-            final TopicsMetricsConfig config = new TopicsMetricsConfig(configReader.readProperties());
             final MetricRegistry metricRegistry = Services.metricRegistry();
 
             initializeClient(metricRegistry, config);
 
             final ExtensionInformation extensionInformation = extensionStartInput.getExtensionInformation();
-            log.info("Extension started " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
+            LOG.info("Extension started " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
 
         } catch (final Exception e) {
             extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() +
                     " cannot be started");
 
-            log.error("Exception thrown at extension start: ", e);
+            LOG.error("Exception thrown at extension start: ", e);
         }
     }
 
@@ -74,12 +74,12 @@ public class TopicsMetricsExtensionMain implements ExtensionMain {
             final @NotNull ExtensionStopOutput extensionStopOutput
     ) {
         final ExtensionInformation extensionInformation = extensionStopInput.getExtensionInformation();
-        log.info("Extension Stopped " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
+        LOG.info("Extension Stopped " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
     }
 
     private void initializeClient(
             final @NotNull MetricRegistry metricRegistry,
-            final @NotNull TopicsMetricsConfig config
+            final @NotNull ExtensionConfig config
     ) {
         final InitializerRegistry initializerRegistry = Services.initializerRegistry();
         final ClientInitializer clientInitializer = new ClientInitializerImpl(metricRegistry, config);

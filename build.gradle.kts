@@ -20,6 +20,12 @@ hivemqExtension {
     }
 }
 
+dependencies {
+    implementation(libs.jetbrains.annotations)
+    implementation(libs.jaxb.api)
+    runtimeOnly(libs.jaxb.impl)
+}
+
 @Suppress("UnstableApiUsage")
 testing {
     suites {
@@ -34,10 +40,10 @@ testing {
         "integrationTest"(JvmTestSuite::class) {
             dependencies {
                 compileOnly(libs.jetbrains.annotations)
-                implementation(libs.hivemq.mqttClient)
+                implementation(libs.jaxb.api)
+                runtimeOnly(libs.jaxb.impl)
                 implementation(libs.testcontainers.junitJupiter)
                 implementation(libs.testcontainers.hivemq)
-                runtimeOnly(libs.logback.classic)
             }
         }
     }

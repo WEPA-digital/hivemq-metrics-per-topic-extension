@@ -7,18 +7,18 @@ import com.hivemq.extension.sdk.api.client.parameter.InitializerInput;
 import com.hivemq.extension.sdk.api.interceptor.publish.PublishInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.publish.PublishOutboundInterceptor;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
-import com.wepa.hivemqextensions.metricspertopic.config.TopicsMetricsConfig;
-import com.wepa.hivemqextensions.metricspertopic.interceptors.PublishInboundInterceptorImpl;
-import com.wepa.hivemqextensions.metricspertopic.interceptors.PublishOutboundInterceptorImpl;
+import com.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
+import com.wepa.hivemqextensions.metricspertopic.initializer.interceptors.PublishInboundInterceptorImpl;
+import com.wepa.hivemqextensions.metricspertopic.initializer.interceptors.PublishOutboundInterceptorImpl;
 
 public class ClientInitializerImpl implements ClientInitializer {
 
     private final @NotNull MetricRegistry metricRegistry;
-    private final @NotNull TopicsMetricsConfig config;
+    private final @NotNull ExtensionConfig config;
 
     public ClientInitializerImpl(
             final @NotNull MetricRegistry metricRegistry,
-            final @NotNull TopicsMetricsConfig config
+            final @NotNull ExtensionConfig config
     ) {
         this.metricRegistry = metricRegistry;
         this.config = config;

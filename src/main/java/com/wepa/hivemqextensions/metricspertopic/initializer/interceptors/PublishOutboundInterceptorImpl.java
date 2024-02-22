@@ -1,4 +1,4 @@
-package com.wepa.hivemqextensions.metricspertopic.interceptors;
+package com.wepa.hivemqextensions.metricspertopic.initializer.interceptors;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
@@ -7,7 +7,7 @@ import com.hivemq.extension.sdk.api.interceptor.publish.PublishOutboundIntercept
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishOutboundOutput;
 import com.wepa.hivemqextensions.metricspertopic.TopicsUtils;
-import com.wepa.hivemqextensions.metricspertopic.config.TopicsMetricsConfig;
+import com.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,15 +16,15 @@ import java.util.HashMap;
 public class PublishOutboundInterceptorImpl implements PublishOutboundInterceptor {
 
     private final HashMap<String, Counter> counters;
-    private final TopicsMetricsConfig config;
+    private final ExtensionConfig config;
     private final MetricRegistry metricRegistry;
 
-    private static final @NotNull Logger log = LoggerFactory.getLogger(PublishOutboundInterceptorImpl.class);
+    private static final @NotNull Logger LOG = LoggerFactory.getLogger(PublishOutboundInterceptorImpl.class);
     private static final String METRIC_NAME_PREFIX = "eu.wepa.hivemq.messages.outgoing.count";
 
     public PublishOutboundInterceptorImpl(
             final @NotNull MetricRegistry metricRegistry,
-            final @NotNull TopicsMetricsConfig config
+            final @NotNull ExtensionConfig config
     ) {
         this.metricRegistry = metricRegistry;
         this.config = config;
@@ -42,8 +42,8 @@ public class PublishOutboundInterceptorImpl implements PublishOutboundIntercepto
         // if counter not exist than, add it to counters.
         if (!counters.containsKey(metricName)) {
             if (config.isVerbose()) {
-                log.info("No Metric Found For Topic: {}", topic);
-                log.info("Create new Metric {} For Topic: {}", metricName, topic);
+                LOG.info("No Metric Found For Topic: {}", topic);
+                LOG.info("Create new Metric {} For Topic: {}", metricName, topic);
             }
 
             TopicsUtils.addTopicCounter(

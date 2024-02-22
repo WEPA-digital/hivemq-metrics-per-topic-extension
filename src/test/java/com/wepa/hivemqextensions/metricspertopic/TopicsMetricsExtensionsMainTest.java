@@ -36,7 +36,6 @@ public class TopicsMetricsExtensionsMainTest {
 
         topicsMetricsExtensionMain.extensionStart(extensionStartInput, extensionStartOutput);
         verify(extensionStartOutput).preventExtensionStartup("My Extension cannot be started");
-
     }
 
     @Test
