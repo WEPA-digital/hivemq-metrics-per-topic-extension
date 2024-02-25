@@ -30,7 +30,7 @@ public class TopicsMetricsConfigParser {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(TopicsMetricsConfigParser.class);
 
-    public static final @NotNull String EXTENSION_CONFIG_FILE_NAME = "config.xml";
+    public static final @NotNull String EXTENSION_CONFIG_FILE_NAME = "conf/config.xml";
 
     private final @NotNull ConfigurationXmlParser configurationXmlParser = new ConfigurationXmlParser();
     private @Nullable ExtensionConfig extensionConfig;

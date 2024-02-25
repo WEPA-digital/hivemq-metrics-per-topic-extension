@@ -43,7 +43,11 @@ public class TopicsMetricsConfigReaderTest {
                 "<metrics-per-topic-extension-configuration>\n" +
                 "        <verbose>true</verbose>\n" +
                 "</metrics-per-topic-extension-configuration>\n";
-        Files.writeString(tempDir.resolve("config.xml"), extensionContent);
+
+        final Path configFile = tempDir.resolve("conf/config.xml");
+        //noinspection ResultOfMethodCallIgnored
+        configFile.getParent().toFile().mkdir();
+        Files.writeString(configFile, extensionContent);
 
         final ExtensionConfig config = new TopicsMetricsConfigParser(tempDir.toFile()).getConfig();
 
@@ -56,7 +60,11 @@ public class TopicsMetricsConfigReaderTest {
                 "<<metrics-per-topic-extension-configuration>\n" +
                 "        <verbose>random</verbose>\n" +
                 "</<metrics-per-topic-extension-configuration>\n";
-        Files.writeString(tempDir.resolve("config.xml"), extensionContent);
+
+        final Path configFile = tempDir.resolve("conf/config.xml");
+        //noinspection ResultOfMethodCallIgnored
+        configFile.getParent().toFile().mkdir();
+        Files.writeString(configFile, extensionContent);
 
         final ExtensionConfig config = new TopicsMetricsConfigParser(tempDir.toFile()).getConfig();
 
@@ -68,7 +76,11 @@ public class TopicsMetricsConfigReaderTest {
         final String extensionContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
                 "<<metrics-per-topic-extension-configuration>\n" +
                 "</<metrics-per-topic-extension-configuration>\n";
-        Files.writeString(tempDir.resolve("config.xml"), extensionContent);
+
+        final Path configFile = tempDir.resolve("conf/config.xml");
+        //noinspection ResultOfMethodCallIgnored
+        configFile.getParent().toFile().mkdir();
+        Files.writeString(configFile, extensionContent);
 
         final ExtensionConfig config = new TopicsMetricsConfigParser(tempDir.toFile()).getConfig();
 
