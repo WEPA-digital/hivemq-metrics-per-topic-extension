@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-present WEPA GmbH
+ * Copyright 2024-present WEPA Digital GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package eu.wepa.hivemqextensions.metricspertopic.interceptors;
 
+import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.interceptor.publish.PublishOutboundInterceptor;
@@ -23,6 +24,7 @@ import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishOutboun
 import eu.wepa.hivemqextensions.metricspertopic.MetricCounterHandler;
 import eu.wepa.hivemqextensions.metricspertopic.TopicsUtils;
 import eu.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
+import eu.wepa.hivemqextensions.metricspertopic.exceptions.NotValidMetricNameException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,17 +61,13 @@ public class PublishOutboundInterceptorImpl implements PublishOutboundIntercepto
                     LOG.info("Create new Metric {} For Topic: {}", metricName, topic);
                 }
 
-                TopicsUtils.addTopicCounter(
-                        metricName,
-                        metricRegistry,
-                        counterHandler
-                );
+                Counter counter = metricRegistry.counter(metricName);
+                counterHandler.put(metricName, counter);
             }
 
             counterHandler.inc(metricName);
-        } catch (Exception exception) {
+        } catch (NotValidMetricNameException exception) {
             LOG.error("Cannot Increment Publish Outbound Messages Metrics: {}", exception.getMessage());
         }
-
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-present WEPA GmbH
+ * Copyright 2024-present WEPA Digital GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,33 +15,21 @@
  */
 package eu.wepa.hivemqextensions.metricspertopic;
 
-import com.codahale.metrics.Counter;
-import com.codahale.metrics.MetricRegistry;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.annotations.Nullable;
+import eu.wepa.hivemqextensions.metricspertopic.exceptions.NotValidMetricNameException;
 
 public class TopicsUtils {
 
-    public static void addTopicCounter(
-            String metricName,
-            MetricRegistry metricRegistry,
-            MetricCounterHandler counterHandler
-    ) {
-        Counter counter = metricRegistry.counter(metricName);
-        counterHandler.put(metricName, counter);
-    }
+    public static final @NotNull String topicToValidMetricName(@Nullable String topic, @Nullable String prefix) throws NotValidMetricNameException {
 
-    public static final @NotNull String topicToValidMetricName(@Nullable String topic, @Nullable String prefix) throws Exception {
-        // TODO: Create NotValidMetricNameException class extends Exception 
+        if (topic == null && prefix == null) {
+            throw new NotValidMetricNameException();
+        }
+
         topic = topic != null ? topic.replace("/", ".") : "";
         prefix = prefix != null ? prefix + "." : "";
 
-        final String metric = prefix + topic;
-
-        if (metric.length() == 0) {
-            throw new Exception("please provide a valide prefix and topic name");
-        }
-
-        return metric;
+        return prefix + topic;
     }
 }

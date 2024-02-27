@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-present WEPA GmbH
+ * Copyright 2024-present WEPA Digital GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,9 +50,7 @@ public class MetricCounterHandler {
     }
 
     public void inc(String key) {
-        final Counter counter = counters.get(key);
-
-        if (counter != null) {
+        if (counters.containsKey(key) && counters.get(key) != null) {
             counters.get(key).inc();
         }
     }
