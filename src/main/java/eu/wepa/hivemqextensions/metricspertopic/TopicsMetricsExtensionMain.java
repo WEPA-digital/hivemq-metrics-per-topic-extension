@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-present MaibornWolff GmbH
+ * Copyright 2024-present MaibornWolff GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import eu.wepa.hivemqextensions.metricspertopic.initializer.ClientInitializerImp
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
+
 public class TopicsMetricsExtensionMain implements ExtensionMain {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(TopicsMetricsExtensionMain.class);
@@ -46,7 +48,6 @@ public class TopicsMetricsExtensionMain implements ExtensionMain {
         }
 
         try {
-
             final TopicsMetricsConfigParser configReader =
                     new TopicsMetricsConfigParser(
                         extensionStartInput.getExtensionInformation()
@@ -58,7 +59,12 @@ public class TopicsMetricsExtensionMain implements ExtensionMain {
             initializeClient(metricRegistry, config);
 
             final ExtensionInformation extensionInformation = extensionStartInput.getExtensionInformation();
-            LOG.info("Extension started " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
+            LOG.info("Extension started {}: {}", extensionInformation.getName(), extensionInformation.getVersion());
+
+            if (config.isVerbose()) {
+                // every 30 seconds log the amount of counters that are created
+                debugCounters(extensionInformation);
+            }
 
         } catch (final Exception e) {
             extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() +
@@ -85,5 +91,15 @@ public class TopicsMetricsExtensionMain implements ExtensionMain {
         final ClientInitializer clientInitializer = new ClientInitializerImpl(metricRegistry, config);
 
         initializerRegistry.setClientInitializer(clientInitializer);
+    }
+
+    private void debugCounters(final ExtensionInformation extensionInformation) {
+        final MetricCounterHandler counterHandler = MetricCounterHandler.initHandler();
+        Services.extensionExecutorService().scheduleAtFixedRate(
+            () -> LOG.info("{} - {}", extensionInformation.getName(), counterHandler.toString()),
+            30,
+            30,
+            TimeUnit.SECONDS
+        );
     }
 }

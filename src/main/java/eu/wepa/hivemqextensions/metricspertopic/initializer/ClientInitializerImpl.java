@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-present MaibornWolff GmbH
+ * Copyright 2024-present MaibornWolff GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import com.hivemq.extension.sdk.api.interceptor.publish.PublishInboundIntercepto
 import com.hivemq.extension.sdk.api.interceptor.publish.PublishOutboundInterceptor;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
 import eu.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
-import eu.wepa.hivemqextensions.metricspertopic.initializer.interceptors.PublishInboundInterceptorImpl;
-import eu.wepa.hivemqextensions.metricspertopic.initializer.interceptors.PublishOutboundInterceptorImpl;
+import eu.wepa.hivemqextensions.metricspertopic.interceptors.PublishInboundInterceptorImpl;
+import eu.wepa.hivemqextensions.metricspertopic.interceptors.PublishOutboundInterceptorImpl;
 
 public class ClientInitializerImpl implements ClientInitializer {
 

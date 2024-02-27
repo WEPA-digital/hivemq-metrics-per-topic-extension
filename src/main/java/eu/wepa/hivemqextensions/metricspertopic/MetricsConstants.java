@@ -15,21 +15,8 @@
  */
 package eu.wepa.hivemqextensions.metricspertopic;
 
-import com.codahale.metrics.Counter;
-import com.codahale.metrics.MetricRegistry;
+public class MetricsConstants {
 
-public class TopicsUtils {
-
-    public static void addTopicCounter(
-            String metricName,
-            MetricRegistry metricRegistry,
-            MetricCounterHandler counterHandler
-    ) {
-        Counter counter = metricRegistry.counter(metricName);
-        counterHandler.put(metricName, counter);
-    }
-
-    public static String topicToValidMetricName(String topic, String prefix) {
-        return prefix +  "." + topic.replace("/", ".");
-    }
+    public static final String METRIC_INCOMING_PREFIX = "eu.wepa.hivemq.messages.incoming.count";
+    public static final String METRIC_OUTGOING_PREFIX = "eu.wepa.hivemq.messages.outgoing.count";
 }
