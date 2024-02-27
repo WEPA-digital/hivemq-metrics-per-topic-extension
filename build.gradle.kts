@@ -9,7 +9,7 @@ description = "HiveMQ Extension which collect Metrics Per topic."
 
 hivemqExtension {
     name.set("Metrics Per topic Extension")
-    author.set("MaibornWolff GmbH")
+    author.set("WEPA Digital GmbH")
     priority.set(1000)
     startPriority.set(1000)
     mainClass.set("$group.metricspertopic.TopicsMetricsExtensionMain")

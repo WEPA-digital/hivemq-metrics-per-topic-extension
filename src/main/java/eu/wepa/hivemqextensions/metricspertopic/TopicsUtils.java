@@ -17,19 +17,14 @@ package eu.wepa.hivemqextensions.metricspertopic;
 
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.annotations.Nullable;
-import eu.wepa.hivemqextensions.metricspertopic.exceptions.NotValidMetricNameException;
 
 public class TopicsUtils {
 
-    public static final @NotNull String topicToValidMetricName(@Nullable String topic, @Nullable String prefix) throws NotValidMetricNameException {
+    public static @NotNull String topicToValidMetricName(@Nullable final String topic, @Nullable final String prefix) {
 
-        if (topic == null && prefix == null) {
-            throw new NotValidMetricNameException();
-        }
+        String newTopic = topic != null ? topic.replace("/", ".") : "null";
+        String newPrefix = prefix != null ? prefix : "null";
 
-        topic = topic != null ? topic.replace("/", ".") : "";
-        prefix = prefix != null ? prefix + "." : "";
-
-        return prefix + topic;
+        return newPrefix + "." + newTopic;
     }
 }

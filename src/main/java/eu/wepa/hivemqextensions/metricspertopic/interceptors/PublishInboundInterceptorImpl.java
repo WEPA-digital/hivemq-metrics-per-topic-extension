@@ -24,7 +24,6 @@ import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishInbound
 import eu.wepa.hivemqextensions.metricspertopic.MetricCounterHandler;
 import eu.wepa.hivemqextensions.metricspertopic.TopicsUtils;
 import eu.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
-import eu.wepa.hivemqextensions.metricspertopic.exceptions.NotValidMetricNameException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,28 +50,22 @@ public class PublishInboundInterceptorImpl implements PublishInboundInterceptor 
             @NotNull PublishInboundOutput publishInboundOutput
     ) {
         String topic = publishInboundInput.getPublishPacket().getTopic();
-        try {
-            String metricName = TopicsUtils.topicToValidMetricName(
-                topic,
-                config.getMetricsNamePrefix().getInboundPublishMetricNamePrefix()
-            );
+        String metricName = TopicsUtils.topicToValidMetricName(
+            topic,
+            config.getMetricsNamePrefix().getInboundPublishMetricNamePrefix()
+        );
 
-            // if counter not exist than, add it to counters.
-            if (!counterHandler.getCounters().containsKey(metricName)) {
-                if (config.isVerbose()) {
-                    LOG.info("No Metric Found For Topic: {}", topic);
-                    LOG.info("Create new Metric {} For Topic: {}", metricName, topic);
-                }
-
-                Counter counter = metricRegistry.counter(metricName);
-                counterHandler.put(metricName, counter);
+        // if counter not exist than, add it to counters.
+        if (!counterHandler.getCounters().containsKey(metricName)) {
+            if (config.isVerbose()) {
+                LOG.info("No Metric Found For Topic: {}", topic);
+                LOG.info("Create new Metric {} For Topic: {}", metricName, topic);
             }
 
-            counterHandler.inc(metricName);
-
-        } catch (NotValidMetricNameException exception) {
-            LOG.error("Cannot Increment Publish Inbound Messages Metrics: {}", exception.getMessage());
+            Counter counter = metricRegistry.counter(metricName);
+            counterHandler.put(metricName, counter);
         }
 
+        counterHandler.inc(metricName);
     }
 }
