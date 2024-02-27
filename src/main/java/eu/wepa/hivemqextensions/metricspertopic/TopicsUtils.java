@@ -29,6 +29,8 @@ public class TopicsUtils {
         counterHandler.put(metricName, counter);
     }
 
+    // REVIEW parameters can be final
+    // we should add a null check here to be safe and then have null.null be the metric name
     public static String topicToValidMetricName(String topic, String prefix) {
         return prefix +  "." + topic.replace("/", ".");
     }

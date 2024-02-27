@@ -59,6 +59,8 @@ public class PublishInboundInterceptorImpl implements PublishInboundInterceptor 
                 LOG.info("Create new Metric {} For Topic: {}", metricName, topic);
             }
 
+            // REVIEW instead of passing `metricRegistry` and `metricName` just to then call `metricRegistry.counter(metricName)` in the helper,
+            // we could just pass the counter directly
             TopicsUtils.addTopicCounter(
                 metricName,
                 metricRegistry,

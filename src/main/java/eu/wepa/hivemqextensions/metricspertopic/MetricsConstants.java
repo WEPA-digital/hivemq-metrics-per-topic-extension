@@ -17,6 +17,7 @@ package eu.wepa.hivemqextensions.metricspertopic;
 
 public class MetricsConstants {
 
+    // REVIEW move to the config
     public static final String METRIC_INCOMING_PREFIX = "eu.wepa.hivemq.messages.incoming.count";
     public static final String METRIC_OUTGOING_PREFIX = "eu.wepa.hivemq.messages.outgoing.count";
 }

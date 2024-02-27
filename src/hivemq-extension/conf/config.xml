@@ -1,3 +1,4 @@
+<!-- REVIEW Move this to resources?-->
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <metrics-per-topic-extension-configuration>
     <verbose>false</verbose>

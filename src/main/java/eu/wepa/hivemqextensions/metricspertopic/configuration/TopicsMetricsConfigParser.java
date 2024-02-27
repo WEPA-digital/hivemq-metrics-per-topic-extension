@@ -51,6 +51,7 @@ public class TopicsMetricsConfigParser {
     private @NotNull ExtensionConfig read(final @NotNull File configFile) {
         final @NotNull ExtensionConfig defaultExtensionConfig = new ExtensionConfig();
 
+        // REVIEW I would switch the if/else case, so that we have if (bad condition) { abort }; do stuff;
         if (
             configFile.exists()
             && configFile.canRead()
@@ -60,6 +61,8 @@ public class TopicsMetricsConfigParser {
                 final @NotNull ExtensionConfig config = configurationXmlParser.unmarshalExtensionConfig(configFile);
                 return validate(config, defaultExtensionConfig);
             } catch (IOException e) {
+                // REVIEW Heartbeat? looks like copy paste
+                // also include the file path that was tried here
                 LOG.warn("Could not read Heartbeat extension configuration file, reason: {}, using defaults {}.",
                         e.getMessage(),
                         defaultExtensionConfig);
@@ -68,6 +71,7 @@ public class TopicsMetricsConfigParser {
             }
         }
 
+        // REVIEW Heartbeat
         LOG.warn("Unable to read Heartbeat extension configuration file {}, using defaults {}.",
                 configFile.getAbsolutePath(),
                 defaultExtensionConfig);
@@ -79,6 +83,7 @@ public class TopicsMetricsConfigParser {
             final @NotNull ExtensionConfig config, final @NotNull ExtensionConfig defaultConfig) {
 
         if (config.getVerbose() == null) {
+            // REVIEW "must be boolean value, but is ' ... '"
             LOG.warn("Verbose must be boolean value " + defaultConfig.getVerbose());
             config.setVerbose(DEFAULT_VERBOSE);
         }

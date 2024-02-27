@@ -1,3 +1,5 @@
+[//]: # (REVIEW a link to where hivemq extensions are documented)
+
 ## Hivemq-metrics-per-topic-extension
 
 ### Purpose
@@ -14,6 +16,7 @@ To install the extension, follow these steps:
 3. Modify the `config.xml` files according to your needs.
 
 ### Metrics
+[//]: # (REVIEW update this with the link to the xml config where one can set the prefix)
 The exposed metrics for inbound messages are in the following format: `eu_wepa_hivemq_message_incoming_count_<topic>`.
 The exposed metrics for outbound messages are in the following format: `eu_wepa_hivemq_message_outgoing_count_<topic>`.
 

@@ -45,6 +45,7 @@ public class MetricCounterHandler {
     }
 
     public void inc(String key) {
+        // REVIEW null check after .get to be safe
         counters.get(key).inc();
     }
 
