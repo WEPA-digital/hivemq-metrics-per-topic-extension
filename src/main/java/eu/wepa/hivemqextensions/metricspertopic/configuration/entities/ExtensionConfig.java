@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-present MaibornWolff GmbH
+ * Copyright 2024-present WEPA GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,38 +25,40 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlElement;
 
 
-@SuppressWarnings("FieldMayBeFinal")
 @XmlRootElement(name = "metrics-per-topic-extension-configuration")
 @XmlType(propOrder = {})
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ExtensionConfig {
 
-    public static final @NotNull String TRUE = "true";
-    public static final @NotNull String FALSE = "false";
+    @XmlElement(type = Boolean.class, name = "verbose", required = false, defaultValue = "false")
+    private @Nullable Boolean verbose = false;
 
-    public static final @NotNull String DEFAULT_VERBOSE = FALSE;
+    @XmlElement(name = "prefix-metrics-name", nillable = true)
+    private @Nullable MetricsNamePrefix metricsNamePrefix;
 
-    @XmlElement(name = "verbose", required = false, defaultValue = DEFAULT_VERBOSE)
-    private @Nullable String verbose = DEFAULT_VERBOSE;
-
-    public boolean isVerbose() {
-        if (verbose == null) {
-            verbose = DEFAULT_VERBOSE;
-        }
-
-        return verbose.equalsIgnoreCase(TRUE);
+    // Default Metrics prefixes
+    public ExtensionConfig() {
+        metricsNamePrefix = MetricsNamePrefix.getDefaultMetricsConfig();
     }
 
-    public String getVerbose() {
+    public @Nullable Boolean isVerbose() {
         return verbose;
     }
 
-    public void setVerbose(String verbose) {
+    public void setVerbose(final Boolean verbose) {
         this.verbose = verbose;
+    }
+
+    public @NotNull MetricsNamePrefix getMetricsNamePrefix() {
+        return metricsNamePrefix;
+    }
+
+    public void setMetricsNamePrefix(final MetricsNamePrefix metricsNamePrefix) {
+        this.metricsNamePrefix = metricsNamePrefix;
     }
 
     @Override
     public @NotNull String toString() {
-        return "extension_config{" + "verbose=" + verbose + "}";
+        return "extension_config{" + "verbose=" + verbose + ", metricsNamePrefix="+ metricsNamePrefix + "}";
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-present MaibornWolff GmbH
+ * Copyright 2024-present WEPA GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public class TopicsMetricsExtensionMain implements ExtensionMain {
 
             if (config.isVerbose()) {
                 // every 30 seconds log the amount of counters that are created
-                debugCounters(extensionInformation);
+                debugCounters(extensionInformation, config);
             }
 
         } catch (final Exception e) {
@@ -93,8 +93,8 @@ public class TopicsMetricsExtensionMain implements ExtensionMain {
         initializerRegistry.setClientInitializer(clientInitializer);
     }
 
-    private void debugCounters(final ExtensionInformation extensionInformation) {
-        final MetricCounterHandler counterHandler = MetricCounterHandler.initHandler();
+    private void debugCounters(final ExtensionInformation extensionInformation, final @NotNull ExtensionConfig config) {
+        final MetricCounterHandler counterHandler = MetricCounterHandler.initHandler(config);
         Services.extensionExecutorService().scheduleAtFixedRate(
             () -> LOG.info("{} - {}", extensionInformation.getName(), counterHandler.toString()),
             30,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-present MaibornWolff GmbH
+ * Copyright 2024-present WEPA GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,26 @@
 package eu.wepa.hivemqextensions.metricspertopic;
 
 import com.codahale.metrics.Counter;
+import com.hivemq.extension.sdk.api.annotations.NotNull;
+import eu.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
+
 import java.util.HashMap;
 
 public class MetricCounterHandler {
 
     private final HashMap<String, Counter> counters;
+    private final ExtensionConfig config;
 
     private static MetricCounterHandler handler;
 
-    private MetricCounterHandler() {
+    private MetricCounterHandler(final @NotNull ExtensionConfig config) {
+        this.config = config;
         counters = new HashMap<>();
     }
 
-    public static MetricCounterHandler initHandler() {
+    public static MetricCounterHandler initHandler(final @NotNull ExtensionConfig config) {
         if (handler == null) {
-            handler = new MetricCounterHandler();
+            handler = new MetricCounterHandler(config);
         }
 
         return handler;
@@ -45,17 +50,22 @@ public class MetricCounterHandler {
     }
 
     public void inc(String key) {
-        counters.get(key).inc();
+        final Counter counter = counters.get(key);
+
+        if (counter != null) {
+            counters.get(key).inc();
+        }
     }
 
     public int size() {
         return counters.size();
     }
 
+    @Override
     public String toString() {
         final int total = this.counters.keySet().size();
-        final int totalInboundCounters = totalCountersPrefix(MetricsConstants.METRIC_INCOMING_PREFIX);
-        final int totalOutboundCounters = totalCountersPrefix(MetricsConstants.METRIC_OUTGOING_PREFIX);
+        final int totalInboundCounters = totalCountersPrefix(config.getMetricsNamePrefix().getInboundPublishMetricNamePrefix());
+        final int totalOutboundCounters = totalCountersPrefix(config.getMetricsNamePrefix().getOutboundPublishMetricNamePrefix());
 
         return String.format("Metrics stats (total=%d, inbound=%d, outbound=%d)",
             total,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-present MaibornWolff GmbH
+ * Copyright 2024-present WEPA GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package eu.wepa.hivemqextensions.metricspertopic;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
+import com.hivemq.extension.sdk.api.annotations.NotNull;
+import com.hivemq.extension.sdk.api.annotations.Nullable;
 
 public class TopicsUtils {
 
@@ -29,7 +31,17 @@ public class TopicsUtils {
         counterHandler.put(metricName, counter);
     }
 
-    public static String topicToValidMetricName(String topic, String prefix) {
-        return prefix +  "." + topic.replace("/", ".");
+    public static final @NotNull String topicToValidMetricName(@Nullable String topic, @Nullable String prefix) throws Exception {
+        // TODO: Create NotValidMetricNameException class extends Exception 
+        topic = topic != null ? topic.replace("/", ".") : "";
+        prefix = prefix != null ? prefix + "." : "";
+
+        final String metric = prefix + topic;
+
+        if (metric.length() == 0) {
+            throw new Exception("please provide a valide prefix and topic name");
+        }
+
+        return metric;
     }
 }

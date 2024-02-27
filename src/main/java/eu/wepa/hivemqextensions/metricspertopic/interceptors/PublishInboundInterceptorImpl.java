@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-present MaibornWolff GmbH
+ * Copyright 2024-present WEPA GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import com.hivemq.extension.sdk.api.interceptor.publish.PublishInboundIntercepto
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishInboundOutput;
 import eu.wepa.hivemqextensions.metricspertopic.MetricCounterHandler;
-import eu.wepa.hivemqextensions.metricspertopic.MetricsConstants;
 import eu.wepa.hivemqextensions.metricspertopic.TopicsUtils;
 import eu.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig;
 import org.slf4j.Logger;
@@ -41,7 +40,7 @@ public class PublishInboundInterceptorImpl implements PublishInboundInterceptor 
     ) {
         this.metricRegistry = metricRegistry;
         this.config = config;
-        counterHandler = MetricCounterHandler.initHandler();
+        counterHandler = MetricCounterHandler.initHandler(config);
     }
 
     @Override
@@ -50,22 +49,31 @@ public class PublishInboundInterceptorImpl implements PublishInboundInterceptor 
             @NotNull PublishInboundOutput publishInboundOutput
     ) {
         String topic = publishInboundInput.getPublishPacket().getTopic();
-        String metricName = TopicsUtils.topicToValidMetricName(topic, MetricsConstants.METRIC_INCOMING_PREFIX);
+        try {
+            String metricName = TopicsUtils.topicToValidMetricName(
+                topic,
+                config.getMetricsNamePrefix().getInboundPublishMetricNamePrefix()
+            );
 
-        // if counter not exist than, add it to counters.
-        if (!counterHandler.getCounters().containsKey(metricName)) {
-            if (config.isVerbose()) {
-                LOG.info("No Metric Found For Topic: {}", topic);
-                LOG.info("Create new Metric {} For Topic: {}", metricName, topic);
+            // if counter not exist than, add it to counters.
+            if (!counterHandler.getCounters().containsKey(metricName)) {
+                if (config.isVerbose()) {
+                    LOG.info("No Metric Found For Topic: {}", topic);
+                    LOG.info("Create new Metric {} For Topic: {}", metricName, topic);
+                }
+
+                TopicsUtils.addTopicCounter(
+                        metricName,
+                        metricRegistry,
+                        counterHandler
+                );
             }
 
-            TopicsUtils.addTopicCounter(
-                metricName,
-                metricRegistry,
-                counterHandler
-            );
+            counterHandler.inc(metricName);
+
+        } catch (Exception exception) {
+            LOG.error("Cannot Increment Publish Inbound Messages Metrics: {}", exception.getMessage());
         }
 
-        counterHandler.inc(metricName);
     }
 }

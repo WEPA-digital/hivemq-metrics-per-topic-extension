@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-present MaibornWolff GmbH
+ * Copyright 2024-present WEPA GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-
-import static eu.wepa.hivemqextensions.metricspertopic.configuration.entities.ExtensionConfig.*;
 
 public class TopicsMetricsConfigParser {
 
@@ -52,43 +50,46 @@ public class TopicsMetricsConfigParser {
         final @NotNull ExtensionConfig defaultExtensionConfig = new ExtensionConfig();
 
         if (
-            configFile.exists()
-            && configFile.canRead()
-            && configFile.length() > 0
+            !configFile.exists()
+            || !configFile.canRead()
+            || configFile.length() == 0
         ) {
-            try {
-                final @NotNull ExtensionConfig config = configurationXmlParser.unmarshalExtensionConfig(configFile);
-                return validate(config, defaultExtensionConfig);
-            } catch (IOException e) {
-                LOG.warn("Could not read Heartbeat extension configuration file, reason: {}, using defaults {}.",
-                        e.getMessage(),
-                        defaultExtensionConfig);
 
-                return defaultExtensionConfig;
-            }
+            LOG.warn("Unable to read Metrics per topic extension configuration file {}, using defaults {}.",
+                    configFile.getAbsolutePath(),
+                    defaultExtensionConfig);
+
+            return defaultExtensionConfig;
         }
 
-        LOG.warn("Unable to read Heartbeat extension configuration file {}, using defaults {}.",
-                configFile.getAbsolutePath(),
-                defaultExtensionConfig);
+        try {
+            final @NotNull ExtensionConfig config = configurationXmlParser.unmarshalExtensionConfig(configFile);
 
-        return defaultExtensionConfig;
+            return validate(config, defaultExtensionConfig);
+        } catch (IOException e) {
+            LOG.warn("Could not read Metrics per topic extension configuration file, reason: {}, using defaults {}.",
+                    e.getMessage(),
+                    defaultExtensionConfig);
+
+            return defaultExtensionConfig;
+        }
     }
 
     private @NotNull ExtensionConfig validate(
-            final @NotNull ExtensionConfig config, final @NotNull ExtensionConfig defaultConfig) {
+        final @NotNull ExtensionConfig config,
+        final @NotNull ExtensionConfig defaultConfig
+    ) {
 
-        if (config.getVerbose() == null) {
-            LOG.warn("Verbose must be boolean value " + defaultConfig.getVerbose());
-            config.setVerbose(DEFAULT_VERBOSE);
+        if (config.isVerbose() == null) {
+            LOG.warn("Verbose value is null, set default value");
+            config.setVerbose(defaultConfig.isVerbose());
         }
 
-        if (!config.getVerbose().equals(TRUE) && !config.getVerbose().equals(FALSE)) {
-            LOG.warn("Verbose must be boolean value " + defaultConfig.getVerbose());
-            config.setVerbose(defaultConfig.getVerbose());
+        if(config.getMetricsNamePrefix() == null) {
+            LOG.warn("Metrics Name Prefix is null, set default prefixes");
+            config.setMetricsNamePrefix(defaultConfig.getMetricsNamePrefix());
         }
 
         return config;
     }
-
 }

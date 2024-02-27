@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-present MaibornWolff GmbH
+ * Copyright 2024-present WEPA GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,14 +34,28 @@ public class TopicsMetricsConfigReaderTest {
         final ExtensionConfig defaultConfig = new ExtensionConfig();
 
         assertFalse(config.isVerbose());
-        assertEquals(config.getVerbose(), defaultConfig.getVerbose());
+        assertEquals(config.isVerbose(), defaultConfig.isVerbose());
+
+        assertNotNull(config.getMetricsNamePrefix());
+        assertEquals(
+            config.getMetricsNamePrefix().getInboundPublishMetricNamePrefix(),
+            defaultConfig.getMetricsNamePrefix().getInboundPublishMetricNamePrefix()
+        );
+        assertEquals(
+            config.getMetricsNamePrefix().getOutboundPublishMetricNamePrefix(),
+            defaultConfig.getMetricsNamePrefix().getOutboundPublishMetricNamePrefix()
+        );
     }
 
     @Test
     void test_nonEmptyPropertiesWhenPropertyFileInConfigFolder(@TempDir final @NotNull Path tempDir) throws IOException {
         final String extensionContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
                 "<metrics-per-topic-extension-configuration>\n" +
-                "        <verbose>true</verbose>\n" +
+                "   <verbose>true</verbose>\n" +
+                "   <prefix-metrics-name>\n" +
+                "       <publish-inbound-metric-prefix>eu.wepa.hivemq.messages.incoming.count</publish-inbound-metric-prefix>\n" +
+                "        <publish-outbound-metric-prefix>eu.wepa.hivemq.messages.outgoing.count</publish-outbound-metric-prefix>\n" +
+                "   </prefix-metrics-name>\n" +
                 "</metrics-per-topic-extension-configuration>\n";
 
         final Path configFile = tempDir.resolve("conf/config.xml");
@@ -52,14 +66,20 @@ public class TopicsMetricsConfigReaderTest {
         final ExtensionConfig config = new TopicsMetricsConfigParser(tempDir.toFile()).getConfig();
 
         assertTrue(config.isVerbose());
+
+        assertNotNull(config.getMetricsNamePrefix());
+        assertEquals(config.getMetricsNamePrefix().getInboundPublishMetricNamePrefix(), "eu.wepa.hivemq.messages.incoming.count");
+        assertEquals(config.getMetricsNamePrefix().getOutboundPublishMetricNamePrefix(), "eu.wepa.hivemq.messages.outgoing.count");
     }
 
     @Test
     void test_invalidPropertiesWhenPropertyFileInConfigFolder(@TempDir final @NotNull Path tempDir) throws IOException {
         final String extensionContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-                "<<metrics-per-topic-extension-configuration>\n" +
+                "<metrics-per-topic-extension-configuration>\n" +
                 "        <verbose>random</verbose>\n" +
-                "</<metrics-per-topic-extension-configuration>\n";
+                "        <prefix-metrics-name>\n" +
+                "        </prefix-metrics-name>\n" +
+                "</metrics-per-topic-extension-configuration>\n";
 
         final Path configFile = tempDir.resolve("conf/config.xml");
         //noinspection ResultOfMethodCallIgnored
@@ -67,15 +87,26 @@ public class TopicsMetricsConfigReaderTest {
         Files.writeString(configFile, extensionContent);
 
         final ExtensionConfig config = new TopicsMetricsConfigParser(tempDir.toFile()).getConfig();
+        final ExtensionConfig defaultConfig = new ExtensionConfig();
 
         assertFalse(config.isVerbose());
+
+        assertNotNull(config.getMetricsNamePrefix());
+        assertEquals(
+                config.getMetricsNamePrefix().getInboundPublishMetricNamePrefix(),
+                defaultConfig.getMetricsNamePrefix().getInboundPublishMetricNamePrefix()
+        );
+        assertEquals(
+                config.getMetricsNamePrefix().getOutboundPublishMetricNamePrefix(),
+                defaultConfig.getMetricsNamePrefix().getOutboundPublishMetricNamePrefix()
+        );
     }
 
     @Test
     void test_missingPropertiesWhenPropertyFileInConfigFolder(@TempDir final @NotNull Path tempDir) throws IOException {
         final String extensionContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-                "<<metrics-per-topic-extension-configuration>\n" +
-                "</<metrics-per-topic-extension-configuration>\n";
+                "<metrics-per-topic-extension-configuration>\n" +
+                "</metrics-per-topic-extension-configuration>\n";
 
         final Path configFile = tempDir.resolve("conf/config.xml");
         //noinspection ResultOfMethodCallIgnored
@@ -83,7 +114,18 @@ public class TopicsMetricsConfigReaderTest {
         Files.writeString(configFile, extensionContent);
 
         final ExtensionConfig config = new TopicsMetricsConfigParser(tempDir.toFile()).getConfig();
+        final ExtensionConfig defaultConfig = new ExtensionConfig();
 
         assertFalse(config.isVerbose());
+
+        assertNotNull(config.getMetricsNamePrefix());
+        assertEquals(
+                config.getMetricsNamePrefix().getInboundPublishMetricNamePrefix(),
+                defaultConfig.getMetricsNamePrefix().getInboundPublishMetricNamePrefix()
+        );
+        assertEquals(
+                config.getMetricsNamePrefix().getOutboundPublishMetricNamePrefix(),
+                defaultConfig.getMetricsNamePrefix().getOutboundPublishMetricNamePrefix()
+        );
     }
 }

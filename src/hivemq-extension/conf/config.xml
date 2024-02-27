@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <metrics-per-topic-extension-configuration>
     <verbose>false</verbose>
+    <prefix-metrics-name>
+        <publish-inbound-metric-prefix>com.hivemq.messages.inbound.count</publish-inbound-metric-prefix>
+        <publish-outbound-metric-prefix>com.hivemq.messages.outbound.count</publish-outbound-metric-prefix>
+    </prefix-metrics-name>
 </metrics-per-topic-extension-configuration>
