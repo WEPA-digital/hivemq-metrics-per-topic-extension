@@ -1,6 +1,13 @@
 name: CI Check
 
-on: [ push ]
+on:
+  push:
+    branches:
+      - feature/*
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   check:

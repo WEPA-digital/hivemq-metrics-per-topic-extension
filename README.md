@@ -51,7 +51,7 @@ This extension includes unit tests to cover certain logic. You can find them in 
 #### GitHub Workflows
 This repository utilizes the following GitHub Actions Workflows:
 
-- **check**: This workflow runs on each push to a feature branch or for merge requests. It performs code linting using pylint and runs the unit tests.
+- **check**: This workflow runs on each push to a feature branch or for merge requests. It runs the unit tests.
 - **releaseExtension**: This workflow runs on each GitHub release of the form `major.minor.patch`. It builds the extension code base, generates a `Zip` archive, and attaches that archive to the release.
 
 > **Note:**
